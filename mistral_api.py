@@ -11,7 +11,7 @@ model = "mistral-large-latest"
 client = MistralClient(api_key=api_key)
 
 
-def ask_question(client: MistralClient, question: str):
+def ask_question(question: str):
     messages = [
         ChatMessage(role="user", content=question)
     ]
