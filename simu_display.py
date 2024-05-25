@@ -4,6 +4,7 @@ import time
 
 
 ############################# MAP PARSER + TESTS ############################
+
 def read_map(filename):
     with open(filename, 'r') as file:
         map_data = []
@@ -22,6 +23,7 @@ def random_inputs():
     return input_liste
 
 ############################# FRONT CAR CLASS ############################
+
 class Voiture_F:
     def __init__(self, x, y, vitesse, orientation):
         self.x = x
@@ -78,9 +80,9 @@ class Voiture_F:
         if retour == 4:
             self.x -= 1
             self.y = self.y
-
             
 ############################ BACK CAR CLASS ############################
+
 class Voiture_B:
     def __init__(self, x, y, vitesse, orientation):
         self.x = x
@@ -137,12 +139,10 @@ class Voiture_B:
 # game init
 pygame.init()
 
-
 # window init
 window_size = (1620, 1080)
 window = pygame.display.set_mode(window_size)
 pygame.display.set_caption("Simulation de Ville")
-
 
 # color structure
 colors = {
@@ -157,17 +157,17 @@ colors = {
 map_data = read_map('map.txt')
 map_size = 9
 
-
 # pixel size
 cell_size = window_size[0] // map_size // 4
-
 
 # Initialiser une voiture
 voiture_f = Voiture_F(16.75, 0.75, 0.25, 0)  # Position initiale (1, 1), vitesse 0.02, orientation Est = 1 
 voiture_b = Voiture_B(voiture_f.x, voiture_f.y - 1, voiture_f.vitesse, voiture_f.orientation)
 
 random_inputs() # debug
-# main loop
+
+############################# MAIN LOOP ############################
+
 running = True
 while running:
     for event in pygame.event.get():
