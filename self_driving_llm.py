@@ -31,14 +31,10 @@ def verify_instruct_data(data: dict):
     for example in data['messages']:
         if example['role'] == 'user':
             map = example['content'].removeprefix("La carte est la suivante : ").removesuffix(". Que devrais-tu faire ? Repondre sous la forme d'une action parmi les 5 actions possibles.")
-            # map is now a string like '[0, 0, 0], [0, 1, 0], [0, 0, 0]'
-            # we need to display it in an external window as a map
-            print(map)
-            # we can use matplotlib to display the map
+
             map = ast.literal_eval(map)
-            print(map)
             plt.imshow(map)
-            # for each cell in the map, we can display the actual value besides the color
+
             for i in range(len(map)):
                 for j in range(len(map[i])):
                     plt.text(j, i, str(map[i][j]), ha='center', va='center')
