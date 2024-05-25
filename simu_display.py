@@ -6,7 +6,7 @@
 #    By: lucas <lucas@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/05/25 15:15:24 by lucas             #+#    #+#              #
-#    Updated: 2024/05/25 20:15:42 by lucas            ###   ########.fr        #
+#    Updated: 2024/05/25 20:39:40 by lucas            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -66,6 +66,8 @@ class Voiture_F:
         if retour == 0:
             self.vitesse = 0
             voiture_b.vitesse = 0
+            self.y = self.y
+            self.x = self.x
         if retour == 1:
             self.y += 1
             self.x = self.x
@@ -197,6 +199,8 @@ while running:
                 voiture_b.x = 16.75
                 voiture_b.y = 0.75 - 1
                 voiture_f.orientation = 0
+            elif event.key == pygame.K_ESCAPE:
+                running = False
 
     # fill default
     window.fill((255, 255, 255))
