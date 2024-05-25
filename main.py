@@ -9,8 +9,66 @@
 #    Updated: 2024/05/25 17:51:38 by lucas            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
+import json
 
 import pygame
+
+
+def get_position_and_action(map, voiture_b, voiture_f):
+    # first, add on the map the previous position of the car
+    x_b, y_b = int(voiture_b.prev_x // max_x), int(voiture_b.prev_y // max_y)
+    x_f, y_f = int(voiture_f.prev_x // max_x), int(voiture_f.prev_y // max_y)
+    map[y_b][x_b] = 0
+    map[y_f][x_b] = 1
+    # then, figure out the action by looking at the difference between the current position and the previous one
+    # we also need to check the orientation of the car, to know if it's going straight, back, or turning left or right
+    if voiture_f.x == voiture_f.prev_x and voiture_f.y == voiture_f.prev_y:
+        action = "s'arreter"
+    elif voiture_f.x == voiture_b.x and voiture_f.y == voiture_b.y:
+        action = "reculer"
+    elif voiture_f.prev_orientation == 0: # Nord
+        if voiture_f.y < voiture_f.prev_y:
+            action = "reculer"
+        elif voiture_f.x < voiture_f.prev_x:
+            action = "tourner a gauche"
+        elif voiture_f.x > voiture_f.prev_x:
+            action = "tourner a droite"
+        elif voiture_f.y > voiture_f.prev_y:
+            action = "avancer tout droit"
+        else:
+            action = "s'arreter"
+    elif voiture_f.orientation == 1: # Est
+        if voiture_f.x > voiture_f.prev_x:
+            action = "avancer tout droit"
+        elif voiture_f.y < voiture_f.prev_y:
+            action = "tourner a gauche"
+        else:
+            action = "tourner a droite"
+    elif voiture_f.orientation == 2: # Sud
+        if voiture_f.y > voiture_f.prev_y:
+            action = "avancer tout droit"
+        elif voiture_f.x > voiture_f.prev_x:
+            action = "tourner a gauche"
+        else:
+            action = "tourner a droite"
+    elif voiture_f.orientation == 3: # Ouest
+        if voiture_f.x < voiture_f.prev_x:
+            action = "avancer tout droit"
+        elif voiture_f.y > voiture_f.prev_y:
+            action = "tourner a gauche"
+        else:
+            action = "tourner a droite"
+    return map, action
+
+
+def add_example_in_txt(map, action, json_path="training_data.json"):
+    with open(json_path, "r") as file:
+        data = json.load(file)
+        data['messages'].append({'role': 'user', 'content': f"La carte est la suivante : {map}. Que devrais-tu faire ? Repondre sous la forme d'une action parmi les 5 actions possibles."})
+        data['messages'].append({'role': 'assistant', 'content': action})
+    with open(json_path, "w") as file:
+        json.dump(data, file, indent=4)
+
 
 
 
@@ -27,7 +85,8 @@ def read_map(filename):
 
 
 
-
+max_x = 30.75
+max_y = 20.75
 
 
 
@@ -38,10 +97,16 @@ class Voiture_F:
     def __init__(self, x, y, vitesse, orientation):
         self.x = x
         self.y = y
+        self.prev_x = x
+        self.prev_y = y
         self.vitesse = vitesse
         self.orientation = orientation  # 0: Nord, 1: Est, 2: Sud, 3: Ouest
+        self.prev_orientation = orientation
 
     def move(self):
+        self.prev_x = self.x
+        self.prev_y = self.y
+        self.prev_orientation = self.orientation
         if self.orientation == 0:  # Nord
             self.y += 1
             self.x = self.x
@@ -70,10 +135,16 @@ class Voiture_B:
     def __init__(self, x, y, vitesse, orientation):
         self.x = x
         self.y = y
+        self.prev_x = x
+        self.prev_y = y
         self.vitesse = vitesse
         self.orientation = orientation  # 0: Nord, 1: Est, 2: Sud, 3: Ouest
+        self.prev_orientation = orientation
 
     def move(self):
+        self.prev_x = self.x
+        self.prev_y = self.y
+        self.prev_orientation = self.orientation
         if self.orientation == 0:  # Nord
             self.x = voiture_f.x
             self.y = voiture_f.y
@@ -99,12 +170,11 @@ class Voiture_B:
 
 
 
-
 # Init
 pygame.init()
 
 # window init
-window_size = (1620, 1080)
+window_size = (1000, 600)
 window = pygame.display.set_mode(window_size)
 pygame.display.set_caption("Simulation de Ville")
 
@@ -159,25 +229,19 @@ while running:
                 voiture_f.orientation = 3  # Ouest
                 voiture_b.move()
                 voiture_f.move()
-            elif event.key == pygame.K_g:
-                if voiture_f.orientation == voiture_b.orientation == 0:  #N
-                    voiture_f.y += 1
-                    voiture_b.y += 1
-                elif voiture_f.orientation == voiture_b.orientation == 1: #E
-                    voiture_f.x -= 1
-                    voiture_b.y += 1
-                elif voiture_f.orientation == voiture_b.orientation == 2: #S
-                    voiture_f.y -= 1
-                    voiture_b.y += 1
-                elif voiture_f.orientation == voiture_b.orientation == 3: #W
-                    voiture_f.x += 1
-                    voiture_b.y += 1
             elif event.key == pygame.K_SPACE:
                 voiture_f.x = 16.75
                 voiture_f.y = 0.75
                 voiture_b.x = 16.75
                 voiture_b.y = 0.75 - 1
                 voiture_f.orientation = 0
+            elif event.key == pygame.K_RETURN:
+                map_data, action = get_position_and_action(map_data, voiture_b, voiture_f)
+                add_example_in_txt(map_data, action)
+                print("Action : ", action)
+                print("Map : ", map_data)
+                print("\n")
+
 
     # fill default
     window.fill((255, 255, 255))
