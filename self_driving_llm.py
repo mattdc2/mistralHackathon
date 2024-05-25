@@ -1,7 +1,7 @@
 import numpy as np
-# from mistral_api import ask_question
-from mistral_model import ask_question
-from utils import load_mapping, load_map
+from utils import load_json
+import matplotlib.pyplot as plt
+import ast
 
 
 def translate_map_into_prompt(map: np.ndarray):
@@ -13,23 +13,48 @@ def translate_map_into_prompt(map: np.ndarray):
                "Tu peux effectuer 5 actions differentes : avancer tout droit, s'arreter, tourner a gauche, tourner a droite, reculer. \n"
                "Ta mission est d'interpreter ton environnement afin de prendre la bonne decision. \n"
                "La carte est codee sous la forme d'une matrice (liste de listes) avec des categories : \n")
-    mapping = load_mapping()
+    mapping = load_json()
     for key, value in mapping.items():
         context += f"{key}: {value}, \n"
 
     context += "La carte est la suivante : \n"
     for row in map:
         context += "[" + ", ".join(str(cell) for cell in row) + "]\n"
+    context += "La direction de la voiture est indiquee grace a ses extremites avant et arriere. \n"
 
     question = "Que devrais-tu faire ? "
-    expected_format = "Répondre sous la forme d'une action parmi les 5 actions possibles."
+    expected_format = "Repondre sous la forme d'une action parmi les 5 actions possibles."
     return context + question + expected_format
 
 
-if __name__ == "__main__":
-    map = load_map("small_map.txt")
-    prompt = translate_map_into_prompt(map)
-    print("Prompt : ", prompt)
-    answer = ask_question(prompt)
-    print("Answer : ", answer)
+def verify_instruct_data(data: dict):
+    for example in data['messages']:
+        if example['role'] == 'user':
+            map = example['content'].removeprefix("La carte est la suivante : ").removesuffix(". Que devrais-tu faire ? Repondre sous la forme d'une action parmi les 5 actions possibles.")
+            # map is now a string like '[0, 0, 0], [0, 1, 0], [0, 0, 0]'
+            # we need to display it in an external window as a map
+            print(map)
+            # we can use matplotlib to display the map
+            map = ast.literal_eval(map)
+            print(map)
+            plt.imshow(map)
+            # for each cell in the map, we can display the actual value besides the color
+            for i in range(len(map)):
+                for j in range(len(map[i])):
+                    plt.text(j, i, str(map[i][j]), ha='center', va='center')
+            plt.show()
+        elif example['role'] == 'assistant':
+            print(example['content'])
 
+
+if __name__ == "__main__":
+    # map = load_map("small_map.txt")
+    # prompt = translate_map_into_prompt(map)
+    # print("Prompt : ", prompt)
+    # answer = ask_question(prompt)
+    # print("Answer : ", answer)
+
+    # read data from json
+    data = load_json("training_data.json")
+    print(data)
+    verify_instruct_data(data)

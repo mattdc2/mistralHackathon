@@ -1,0 +1,16 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "Tu es un agent autonome devant agir dans un environnement. Tu es represente par une voiture se deplacant au sein d'une carte. Tu respectes les regles du code de la route francais. Tu peux effectuer 5 actions differentes : avancer tout droit, s'arreter, tourner a gauche, tourner a droite, reculer. Ta mission est d'interpreter ton environnement afin de prendre la bonne decision. La carte est codee sous la forme d'une matrice (liste de listes) avec des categories : -2: Arriere de la voiture, -1: Avant de la voiture, 0: Trottoirs et endroits inaccessibles aux voitures, 1: Routes, 2: Pietons et cyclistes, 3: Panneau de signalisation de danger (triangle), 4: Feu rouge, 5: Feu orange, 6: Feu vert, 7: Panneau de priorite a droite (rond avec une fleche vers la droite), 8: Panneau de cedez-le-passage (triangle avec une ligne horizontale), 9: Panneau de stop (octogone avec le mot 'STOP' ecrit en blanc sur fond rouge), 10: Panneau de sens interdit (rond avec une ligne horizontale barree). La direction de la voiture est indiquee grace a ses extremites avant et arriere. "
+    },
+    {
+      "role": "user",
+      "content": "La carte est la suivante : [0, 0, 0, 0, 0], [1, -2, -1, 1, 1], [0, 0, 1, 0, 0], [0, 0, 1, 0, 0]. Que devrais-tu faire ? Repondre sous la forme d'une action parmi les 5 actions possibles."
+    },
+    {
+      "role": "assistant",
+      "content": "avancer tout droit, tourner a droite"
+    },
+  ]
+}

@@ -10,7 +10,7 @@ def load_dotenv():
             os.environ[key] = value
 
 
-def load_mapping(path="mapping.json"):
+def load_json(path="mapping.json"):
     # Load mapping from a json file
     with open(path) as f:
         return json.load(f)
