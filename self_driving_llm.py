@@ -33,14 +33,15 @@ def verify_instruct_data(data: dict):
             map = example['content'].removeprefix("La carte est la suivante : ").removesuffix(". Que devrais-tu faire ? Repondre sous la forme d'une action parmi les 5 actions possibles.")
 
             map = ast.literal_eval(map)
+
+        if example['role'] == 'assistant':
+            plt.title(example['content'])
             plt.imshow(map)
 
             for i in range(len(map)):
                 for j in range(len(map[i])):
                     plt.text(j, i, str(map[i][j]), ha='center', va='center')
             plt.show()
-        elif example['role'] == 'assistant':
-            print(example['content'])
 
 
 if __name__ == "__main__":
@@ -50,7 +51,5 @@ if __name__ == "__main__":
     # answer = ask_question(prompt)
     # print("Answer : ", answer)
 
-    # read data from json
     data = load_json("training_data.json")
-    print(data)
     verify_instruct_data(data)
