@@ -1,7 +1,16 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    main.py                                            :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: lucas <lucas@student.42.fr>                +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2024/05/25 15:15:24 by lucas             #+#    #+#              #
+#    Updated: 2024/05/25 15:15:27 by lucas            ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 import pygame
-import time
-
-
 
 
 
@@ -90,7 +99,7 @@ cell_size = window_size[0] // map_size // 4
 
 
 # Initialiser une voiture
-voiture = Voiture(1, 1, 1, 1)  # Position initiale (1, 1), vitesse 0.02, orientation Est = 1 
+voiture = Voiture(15, 7, 1, 1)  # Position initiale (1, 1), vitesse 0.02, orientation Est = 1 
 
 
 # main
@@ -123,9 +132,6 @@ while running:
             value = map_data[row][col]
             color = colors.get(value, (0, 0, 0))  # Par défaut noir si valeur non trouvée
             pygame.draw.rect(window, color, (col * cell_size, row * cell_size, cell_size, cell_size))
-
-    # Mettre à jour la position de la voiture
-    # voiture.move()
 
     # draw car
     voiture.draw(window, cell_size)
