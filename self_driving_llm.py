@@ -31,7 +31,6 @@ def verify_instruct_data(data: dict):
     for example in data['messages']:
         if example['role'] == 'user':
             map = example['content'].removeprefix("La carte est la suivante : ").removesuffix(". Que devrais-tu faire ? Repondre sous la forme d'une action parmi les 5 actions possibles.")
-
             map = ast.literal_eval(map)
 
         if example['role'] == 'assistant':
