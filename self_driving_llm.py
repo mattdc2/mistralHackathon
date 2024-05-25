@@ -1,5 +1,6 @@
 import numpy as np
-from mistral_api import ask_question
+# from mistral_api import ask_question
+from mistral_model import ask_question
 from utils import load_mapping, load_map
 
 
