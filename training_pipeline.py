@@ -8,7 +8,7 @@ model = AutoModelForCausalLM.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 
 
-train_data = []
+train_data = [] # A compléter
 
 train_dataset = Dataset.from_dict(train_data)
 
