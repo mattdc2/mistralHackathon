@@ -1,19 +1,9 @@
-# **************************************************************************** #
-#                                                                              #
-#                                                         :::      ::::::::    #
-#    simu_display.py                                    :+:      :+:    :+:    #
-#                                                     +:+ +:+         +:+      #
-#    By: lucas <lucas@student.42.fr>                +#+  +:+       +#+         #
-#                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/05/25 15:15:24 by lucas             #+#    #+#              #
-#    Updated: 2024/05/25 20:39:40 by lucas            ###   ########.fr        #
-#                                                                              #
-# **************************************************************************** #
-
 import pygame
+import random
+import time
 
 
-# parser
+############################# MAP PARSER + TESTS ############################
 def read_map(filename):
     with open(filename, 'r') as file:
         map_data = []
@@ -22,8 +12,16 @@ def read_map(filename):
             map_data.append(row)
     return map_data
 
+# return liste of random int between 0 and 5 (to remove)
+def random_inputs():
+    input_liste = []
+    for _ in range(10):
+        input_random = random.randint(0, 5)
+        input_liste.append(input_random)
+    print(input_liste)
+    return input_liste
 
-# Classe Voiture
+############################# FRONT CAR CLASS ############################
 class Voiture_F:
     def __init__(self, x, y, vitesse, orientation):
         self.x = x
@@ -31,7 +29,7 @@ class Voiture_F:
         self.vitesse = vitesse
         self.orientation = orientation  # 0: Nord, 1: Est, 2: Sud, 3: Ouest
 
-    # keyboard_kemovemove the car with WASD
+    # move the car with WASD
     def keyboard_move(self):
         if self.orientation == 0:  # Nord
             self.y += 1
@@ -56,7 +54,7 @@ class Voiture_F:
         car_rect = pygame.Rect(self.x * cell_size + cell_size // 4, self.y * cell_size + cell_size // 4, car_width, car_len)
         pygame.draw.rect(window, (255, 0, 0), car_rect)
 
-    # keyboard_kemovemove the car with the 5 case that LLM is returning 
+    # move the car with the 5 case that LLM is returning 
     def interpreter(self, retour):
         # 0 = stop
         # 1 = go up
@@ -82,7 +80,7 @@ class Voiture_F:
             self.y = self.y
 
             
-# Back car class
+############################ BACK CAR CLASS ############################
 class Voiture_B:
     def __init__(self, x, y, vitesse, orientation):
         self.x = x
@@ -105,7 +103,7 @@ class Voiture_B:
             self.y = voiture_f.y
             self.x = voiture_f.x
     
-    def interepreteur(self, retour):
+    def interpreteur(self, retour):
         # 0 = stop
         # 1 = go up
         # 2 = go down
@@ -134,11 +132,11 @@ class Voiture_B:
         car_rect = pygame.Rect(self.x * cell_size + cell_size // 4, self.y * cell_size + cell_size // 4, car_width, car_len)
         pygame.draw.rect(window, (0, 255, 0), car_rect)
 
-    
+############################# INIT ############################
 
-
-# Init
+# game init
 pygame.init()
+
 
 # window init
 window_size = (1620, 1080)
@@ -168,7 +166,7 @@ cell_size = window_size[0] // map_size // 4
 voiture_f = Voiture_F(16.75, 0.75, 0.25, 0)  # Position initiale (1, 1), vitesse 0.02, orientation Est = 1 
 voiture_b = Voiture_B(voiture_f.x, voiture_f.y - 1, voiture_f.vitesse, voiture_f.orientation)
 
-
+random_inputs() # debug
 # main loop
 running = True
 while running:
@@ -199,6 +197,13 @@ while running:
                 voiture_b.x = 16.75
                 voiture_b.y = 0.75 - 1
                 voiture_f.orientation = 0
+            # l binded to run random input tests
+            elif event.key == pygame.K_l:
+                new_liste = random_inputs()
+                for nombre in new_liste:
+                    voiture_b.interpreteur(nombre)
+                    voiture_f.interpreter(nombre)
+                    print(nombre) #debug
             elif event.key == pygame.K_ESCAPE:
                 running = False
 
