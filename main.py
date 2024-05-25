@@ -6,7 +6,7 @@
 #    By: lucas <lucas@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/05/25 15:15:24 by lucas             #+#    #+#              #
-#    Updated: 2024/05/25 17:10:26 by lucas            ###   ########.fr        #
+#    Updated: 2024/05/25 17:51:38 by lucas            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -43,48 +43,24 @@ class Voiture_F:
 
     def move(self):
         if self.orientation == 0:  # Nord
-            self.y -= self.vitesse
-            print(self.y)
-            print("N")
-            print(self.x)
-        elif self.orientation == 1:  # Est
-            self.x += self.vitesse
-            print(self.y)
-            print("E")
-            print(self.x)
-        elif self.orientation == 2:  # Sud
-            self.y += self.vitesse
-            print(self.y)
-            print("S")
-            print(self.x)
-        elif self.orientation == 3:  # Ouest
-            self.x -= self.vitesse
-            print(self.y)
-            print('W')
-            print(self.x)
+            self.y += 1
+            self.x = self.x
 
-            
-    def can_move(self):
-        try:
-            if self.orientation == 0:  # Nord
-                return self.map_data[self.y - 1][self.x] == 0 and self.map_data[self.y - 1][self.x - 1] == 1
-            elif self.orientation == 1:  # Est
-                return self.map_data[self.y][self.x + 1] == 0 and self.map_data[self.y - 1][self.x + 1] == 1
-            elif self.orientation == 2:  # Sud
-                return self.map_data[self.y + 1][self.x] == 0 and self.map_data[self.y + 1][self.x - 1] == 1
-            elif self.orientation == 3:  # Ouest
-                return self.map_data[self.y][self.x - 1] == 0 and self.map_data[self.y - 1][self.x - 1] == 1
-        except IndexError:
-            return False
+        elif self.orientation == 1:  # Est
+            self.x -= 1
+            self.y = self.y
+
+        elif self.orientation == 2:  # Sud
+            self.y -= 1
+            self.x = self.x
+
+        elif self.orientation == 3:  # Ouest
+            self.x += 1
+            self.y = self.y
 
     def draw(self, window, cell_size):
-        # Dessiner la voiture comme un rectangle rouge
-        if self.orientation == 0 or self.orientation == 2:
-            car_width = cell_size
-            car_len = car_width * 2
-        elif self.orientation == 1 or self.orientation == 3:
-            car_len = cell_size
-            car_width = car_len * 2
+        car_width = cell_size
+        car_len = cell_size
         car_rect = pygame.Rect(self.x * cell_size + cell_size // 4, self.y * cell_size + cell_size // 4, car_width, car_len)
         pygame.draw.rect(window, (255, 0, 0), car_rect)
 
@@ -99,8 +75,8 @@ class Voiture_B:
 
     def move(self):
         if self.orientation == 0:  # Nord
-            self.y = voiture_f.y
             self.x = voiture_f.x
+            self.y = voiture_f.y
         elif self.orientation == 1:  # Est
             self.y = voiture_f.y
             self.x = voiture_f.x
@@ -111,29 +87,15 @@ class Voiture_B:
             self.y = voiture_f.y
             self.x = voiture_f.x
             
-    def can_move(self):
-        try:
-            if self.orientation == 0:  # Nord
-                return self.map_data[self.y - 1][self.x] == 0 and self.map_data[self.y - 1][self.x - 1] == 1
-            elif self.orientation == 1:  # Est
-                return self.map_data[self.y][self.x + 1] == 0 and self.map_data[self.y - 1][self.x + 1] == 1
-            elif self.orientation == 2:  # Sud
-                return self.map_data[self.y + 1][self.x] == 0 and self.map_data[self.y + 1][self.x - 1] == 1
-            elif self.orientation == 3:  # Ouest
-                return self.map_data[self.y][self.x - 1] == 0 and self.map_data[self.y - 1][self.x - 1] == 1
-        except IndexError:
-            return False
-
     def draw(self, window, cell_size):
         # Dessiner la voiture comme un rectangle rouge
-        if self.orientation == 0 or self.orientation == 2:
-            car_width = cell_size
-            car_len = cell_size
+        car_width = cell_size
+        car_len = cell_size
         # elif self.orientation == 1 or self.orientation == 3:
         #     car_len = cell_size
         #     car_width = car_len * 2
         car_rect = pygame.Rect(self.x * cell_size + cell_size // 4, self.y * cell_size + cell_size // 4, car_width, car_len)
-        pygame.draw.rect(window, (255, 0, 0), car_rect)
+        pygame.draw.rect(window, (0, 255, 0), car_rect)
 
 
 
@@ -151,6 +113,7 @@ pygame.display.set_caption("Simulation de Ville")
 colors = {
     0: (0, 0, 0),        # Noir (route)
     1: (255, 255, 255),  # Blanc (autre)
+    2: (0, 0, 255), 
     4: (255, 0, 0),      # Stop
 }
 
@@ -170,7 +133,7 @@ cell_size = window_size[0] // map_size // 4
 
 # Initialiser une voiture
 voiture_f = Voiture_F(16.75, 0.75, 0.25, 0)  # Position initiale (1, 1), vitesse 0.02, orientation Est = 1 
-voiture_b = Voiture_B(voiture_f.x - cell_size, voiture_f.y - cell_size, voiture_f.vitesse, voiture_f.orientation)
+voiture_b = Voiture_B(voiture_f.x, voiture_f.y - 1, voiture_f.vitesse, voiture_f.orientation)
 
 # main
 running = True
@@ -180,31 +143,40 @@ while running:
             running = False
         # Détection des touches pour changer la direction de la voiture
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_w:
+            if event.key == pygame.K_s:
                 voiture_f.orientation = 0  # Nord
-                voiture_f.move()
-            elif event.key == pygame.K_d:
-                voiture_f.orientation = 1  # Est
-                voiture_f.move()
-            elif event.key == pygame.K_s:
-                voiture_f.orientation = 2  # Sud
+                voiture_b.move()
                 voiture_f.move()
             elif event.key == pygame.K_a:
-                voiture_f.orientation = 3  # Ouest
+                voiture_f.orientation = 1  # Est
+                voiture_b.move()
                 voiture_f.move()
-                voiture_b.x = voiture_f.x - 1.25
+            elif event.key == pygame.K_w:
+                voiture_f.orientation = 2  # Sud
+                voiture_b.move()
+                voiture_f.move()
+            elif event.key == pygame.K_d:
+                voiture_f.orientation = 3  # Ouest
+                voiture_b.move()
+                voiture_f.move()
             elif event.key == pygame.K_g:
-                if voiture_f.orientation == 0:
-                    voiture_f.y -= voiture_f.vitesse
-                elif voiture_f.orientation == 1:
-                    voiture_f.x += voiture_f.vitesse
-                elif voiture_f.orientation == 2:
-                    voiture_f.y += voiture_f.vitesse
-                elif voiture_f.orientation == 3:
-                    voiture_f.x -= voiture_f.vitesse
+                if voiture_f.orientation == voiture_b.orientation == 0:  #N
+                    voiture_f.y += 1
+                    voiture_b.y += 1
+                elif voiture_f.orientation == voiture_b.orientation == 1: #E
+                    voiture_f.x -= 1
+                    voiture_b.y += 1
+                elif voiture_f.orientation == voiture_b.orientation == 2: #S
+                    voiture_f.y -= 1
+                    voiture_b.y += 1
+                elif voiture_f.orientation == voiture_b.orientation == 3: #W
+                    voiture_f.x += 1
+                    voiture_b.y += 1
             elif event.key == pygame.K_SPACE:
                 voiture_f.x = 16.75
                 voiture_f.y = 0.75
+                voiture_b.x = 16.75
+                voiture_b.y = 0.75 - 1
                 voiture_f.orientation = 0
 
     # fill default
@@ -218,8 +190,8 @@ while running:
             pygame.draw.rect(window, color, (col * cell_size, row * cell_size, cell_size, cell_size))
 
     # draw car
-    voiture_f.draw(window, cell_size)
     voiture_b.draw(window, cell_size)
+    voiture_f.draw(window, cell_size)
     # Refresh
     pygame.display.flip()
 
