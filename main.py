@@ -77,8 +77,8 @@ def add_example_in_txt(map, action, json_path="data/training_data.json"):
         data = json.load(file)
         data['messages'].append({'role': 'user', 'content': f"La carte est la suivante : {map}. Que devrais-tu faire ? Repondre sous la forme d'une action parmi les 5 actions possibles."})
         data['messages'].append({'role': 'assistant', 'content': action})
-    with open(json_path, "w") as file:
-        json.dump(data, file, indent=4)
+    with open(json_path, "w") as out_file:
+        out_file.write(json.dumps(data))
 
 
 class Voiture_F:
