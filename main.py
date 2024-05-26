@@ -310,18 +310,16 @@ while running:
                     voiture_f.stay()
                     voiture_b.stay()
                 elif event.key == pygame.K_m:
-                    while True:
-                        cropped_map = crop_map(map_data, 6)
-                        prompt = translate_map_into_prompt(cropped_map)
-                        llm_input = ask_question(prompt).lower()
+                    cropped_map = crop_map(map_data, 6)
+                    prompt = translate_map_into_prompt(cropped_map)
+                    llm_input = ask_question(prompt).lower().replace("à", "a").replace(".", "")
 
-                        result = create_action_from_direction(llm_input)
+                    result = create_action_from_direction(llm_input)
 
-                        voiture_b.interpreteur(result)
-                        voiture_f.interpreteur(result)
-                        print('llm_input : ', llm_input)
-                        print("Result : ", result)
-                        time.sleep(5)
+                    voiture_b.interpreteur(result)
+                    voiture_f.interpreteur(result)
+                    print('llm_input : ', llm_input)
+                    print("Result : ", result)
 
     # fill default
     window.fill((255, 255, 255))

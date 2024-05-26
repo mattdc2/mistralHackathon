@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import ast
 
 
-def translate_map_into_prompt(map: np.ndarray):
+def translate_map_into_prompt(map):
     # 0: empty road, 1: pedestrian, 2: forbidden pixel for the car (sidewalk), 3: our car, 4: other car
     # we want to translate this into a prompt
     context = ("Tu es un agent autonome devant agir dans un environnement. \n"
