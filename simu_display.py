@@ -147,10 +147,11 @@ pygame.display.set_caption("Simulation de Ville")
 # color structure
 colors = {
     0: (0, 0, 0),        # Noir (route)
-    1: (255, 255, 255),  # Blanc (autre)
-    2: (0, 0, 255),        # panneaux
-    3: (100, 130, 110),   # Border
-    4: (255, 0, 0),      # Stop
+    1: (255, 255, 255),  # Blanc (auto-fill)
+    2: (0, 0, 255),      # panneaux
+    3: (100, 130, 110),  # Border
+    4: (255, 0, 0),      # feu
+    5: (210, 55, 30)     # passage pieton
 }
 
 # read

@@ -1,6 +1,8 @@
 import json
 import pygame
 from utils import read_map, print_matrix, convert_pos_to_index
+from self_driving_llm import translate_map_into_prompt
+from mistral_api import ask_question
 
 # PARAMS
 # Please note that the top left of the map is (0, 0) and the bottom right is (30, 20)
@@ -110,6 +112,30 @@ class Voiture_F:
             self.x += 1
             self.y = self.y
 
+    def interpreter(self, retour):
+            # 0 = stop
+            # 1 = go up
+            # 2 = go down
+            # 3 = go left
+            # 4 = go right
+            if retour == 0:
+                self.vitesse = 0
+                voiture_b.vitesse = 0
+                self.y = self.y
+                self.x = self.x
+            if retour == 1:
+                self.y += 1
+                self.x = self.x
+            if retour == 2:
+                self.y -= 1
+                self.x = self.x
+            if retour == 3:
+                self.x += 1
+                self.y = self.y
+            if retour == 4:
+                self.x -= 1
+                self.y = self.y
+
     def stay(self):
         self.prev_x = self.x
         self.prev_y = self.y
@@ -145,7 +171,28 @@ class Voiture_B:
         self.prev_y = self.y
         self.prev_orientation = self.orientation
 
-
+    def interpreteur(self, retour):
+        # 0 = stop
+        # 1 = go up
+        # 2 = go down
+        # 3 = go left
+        # 4 = go right
+        if retour == 0: 
+            self.x = self.x
+            self.y = self.y
+        elif retour == 1:
+            self.y = voiture_f.y
+            self.x = voiture_f.x
+        elif retour == 2:
+            self.y = voiture_f.y
+            self.x = voiture_f.x
+        elif retour == 3:
+            self.y = voiture_f.y
+            self.x = voiture_f.x
+        elif retour == 4:
+            self.x = voiture_f.x
+            self.y = voiture_f.y
+    
     def draw(self, window, cell_size):
         # Dessiner la voiture comme un rectangle rouge
         car_width = cell_size
@@ -157,6 +204,7 @@ class Voiture_B:
         pygame.draw.rect(window, (0, 255, 0), car_rect)
 
 
+    
 # Init
 pygame.init()
 
@@ -214,6 +262,14 @@ while running:
                 elif event.key == pygame.K_BACKSPACE:
                     voiture_f.stay()
                     voiture_b.stay()
+                elif event.key == pygame.K_m:
+                    while True:
+                        croped_map = crop_map(map_data, 6)
+                        prompt = translate_map_into_prompt(crop_map)
+                        llm_input = ask_question(prompt)
+                        
+                        voiture_b.interpreteur(result)
+                        voiture_f.interpreteur(result)
 
     # fill default
     window.fill((255, 255, 255))
