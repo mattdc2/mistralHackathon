@@ -306,6 +306,8 @@ while running:
                     voiture_f.orientation = 3  # East
                     voiture_b.move()
                     voiture_f.move()
+                elif event.key == pygame.K_ESCAPE:
+                    running = False
                 elif event.key == pygame.K_BACKSPACE:
                     voiture_f.stay()
                     voiture_b.stay()
