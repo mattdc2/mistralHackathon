@@ -23,7 +23,7 @@ def translate_map_into_prompt(map: np.ndarray):
     context += "La direction de la voiture est indiquee grace a ses extremites avant et arriere. \n"
 
     question = "Que devrais-tu faire ? "
-    expected_format = "Repondre sous la forme d'une action parmi les 5 actions possibles."
+    expected_format = "Repondre sous la forme d'une action parmi les 5 actions possibles. NE RAJOUTE RIEN D'AUTRE. \n"
     return context + question + expected_format
 
 

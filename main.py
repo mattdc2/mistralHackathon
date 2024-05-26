@@ -1,4 +1,6 @@
 import json
+import time
+
 import pygame
 from utils import read_map, print_matrix, convert_pos_to_index
 from self_driving_llm import translate_map_into_prompt
@@ -29,9 +31,9 @@ colors = {
 }
 
 initial_x = 15.75
-initial_y = 0.75
+initial_y = 3.75
 initial_vitesse = 0.25
-initial_orientation = 0
+initial_orientation = 2
 
 
 def get_position_and_action(map, voiture_b, voiture_f):
@@ -83,6 +85,51 @@ def add_example_in_txt(map, action, json_path="data/training_data.json"):
         out_file.write(json.dumps(data))
 
 
+def create_action_from_direction(direction: str):
+    # we want to translate the direction of the car into an action
+    # direction is one of "S'arreter", "Avancer", "Tourner a gauche", "Tourner a droite", "Faire demi-tour"
+    # if the car is going East and the LLM says "go straight", the action will be "KEY_RIGHT"
+    # if the car is going East and the LLM says "turn left", the action will be "KEY_UP"
+    if direction == "s'arreter":
+        return 0  # action to stop
+    elif direction == "avancer tout droit":
+        if voiture_f.orientation == 0:  # North
+            return 1  # action to go up
+        elif voiture_f.orientation == 1:  # West
+            return 3  # action to go left
+        elif voiture_f.orientation == 2:  # South
+            return 2  # action to go down
+        elif voiture_f.orientation == 3:  # East
+            return 4  # action to go right
+    elif direction == "tourner a gauche":
+        if voiture_f.orientation == 0:
+            return 3
+        elif voiture_f.orientation == 1:
+            return 2
+        elif voiture_f.orientation == 2:
+            return 4
+        elif voiture_f.orientation == 3:
+            return 1
+    elif direction == "tourner a droite":
+        if voiture_f.orientation == 0:
+            return 4
+        elif voiture_f.orientation == 1:
+            return 1
+        elif voiture_f.orientation == 2:
+            return 3
+        elif voiture_f.orientation == 3:
+            return 2
+    elif direction == "reculer":
+        if voiture_f.orientation == 0:
+            return 2
+        elif voiture_f.orientation == 1:
+            return 4
+        elif voiture_f.orientation == 2:
+            return 1
+        elif voiture_f.orientation == 3:
+            return 3
+
+
 class Voiture_F:
     def __init__(self, x, y, vitesse, orientation):
         self.x = x
@@ -112,7 +159,7 @@ class Voiture_F:
             self.x += 1
             self.y = self.y
 
-    def interpreter(self, retour):
+    def interpreteur(self, retour):
             # 0 = stop
             # 1 = go up
             # 2 = go down
@@ -124,16 +171,16 @@ class Voiture_F:
                 self.y = self.y
                 self.x = self.x
             if retour == 1:
-                self.y += 1
-                self.x = self.x
-            if retour == 2:
                 self.y -= 1
                 self.x = self.x
+            if retour == 2:
+                self.y += 1
+                self.x = self.x
             if retour == 3:
-                self.x += 1
+                self.x -= 1
                 self.y = self.y
             if retour == 4:
-                self.x -= 1
+                self.x += 1
                 self.y = self.y
 
     def stay(self):
@@ -264,12 +311,17 @@ while running:
                     voiture_b.stay()
                 elif event.key == pygame.K_m:
                     while True:
-                        croped_map = crop_map(map_data, 6)
-                        prompt = translate_map_into_prompt(crop_map)
-                        llm_input = ask_question(prompt)
-                        
+                        cropped_map = crop_map(map_data, 6)
+                        prompt = translate_map_into_prompt(cropped_map)
+                        llm_input = ask_question(prompt).lower()
+
+                        result = create_action_from_direction(llm_input)
+
                         voiture_b.interpreteur(result)
                         voiture_f.interpreteur(result)
+                        print('llm_input : ', llm_input)
+                        print("Result : ", result)
+                        time.sleep(5)
 
     # fill default
     window.fill((255, 255, 255))
