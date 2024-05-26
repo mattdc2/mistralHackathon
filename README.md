@@ -1,3 +1,6 @@
+![MistralDriver](./media/logo.jpg)
+
+
 # Mistral Driver
 
 The goal of this project is to find a way to use Mistral as an autonomous driving simulator. 
