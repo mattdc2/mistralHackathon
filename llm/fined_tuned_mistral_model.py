@@ -6,12 +6,9 @@ from mistral_common.protocol.instruct.messages import UserMessage
 from mistral_common.protocol.instruct.request import ChatCompletionRequest
 
 
-model_path = ''
-
-tokenizer = MistralTokenizer.from_file(model_path)  
-model = Transformer.from_folder(model_path)
-
-def ask_question(prompt):
+def ask_question(prompt, model_path=""):
+    tokenizer = MistralTokenizer.from_file(model_path)
+    model = Transformer.from_folder(model_path)
     completion_request = ChatCompletionRequest(messages=[UserMessage(content=prompt)])
 
     tokens = tokenizer.encode_chat_completion(completion_request).tokens

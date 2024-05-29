@@ -1,4 +1,3 @@
-import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, Trainer, TrainingArguments
 from datasets import Dataset
 from peft import get_peft_model, LoraConfig, TaskType
@@ -8,7 +7,7 @@ model = AutoModelForCausalLM.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 
 
-train_data = [] # A compléter
+train_data = []  # A compléter
 
 train_dataset = Dataset.from_dict(train_data)
 

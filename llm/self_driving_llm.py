@@ -1,4 +1,3 @@
-import numpy as np
 from utils import load_json
 import matplotlib.pyplot as plt
 import ast
